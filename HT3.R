@@ -104,15 +104,13 @@ training<-rbind(atipic, training)
 test<-houses[-trainRowsNumber,]
 test<-test[-c(584, 326, 1188, 1299, 945, 30, 1004, 826, 524, 1322, 1387 ,549 ,251 ,121 ,1231 ,1276 ,596 ,1380 ,399 ,31 ,48 ,342 ,336 ,22 ,13 ,2 ,1360 ,609 ,385 ,945 ,1371),]
 
+table(training$clasification)
+table(test$clasification)
+
 #Arbol de regresion
 arbolModelo<-rpart(clasification~.,houses,method = "class")
 rpart.plot(arbolModelo)
-dt_model<-rpart(clasification~.,training,method = "class")
-rpart.plot(dt_model)
-
 #Arbol de clasificacion
-arbolModelo<-rpart(clasification~.,houses,method = "class")
-rpart.plot(arbolModelo)
 dt_model<-rpart(clasification~.,training,method = "class")
 rpart.plot(dt_model)
 
@@ -129,5 +127,6 @@ ct<-trainControl(method = "cv",training[,1:82],number=10, verboseIter=T)
 modelorf<-train(clasification~.,data=training,method="rf",trControl = ct)
 prediccionrfVC<-predict(modelorf,newdata = test[,1:82])
 test$predrfVC<-prediccionrfVC
+
 cfmCaret <- confusionMatrix(table(test$predrfVC,test$clasification))
 cfmCaret

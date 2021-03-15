@@ -13,7 +13,7 @@ library(caret)
 library(tree)
 library(rpart.plot)
 
-setwd("C:/Users/Zephyrus/Documents/U/7mo Semestre/Mineria de Datos/HT3-Mineria")
+#setwd("C:/Users/Zephyrus/Documents/U/7mo Semestre/Mineria de Datos/HT3-Mineria")
 houses = read.csv('train.csv')
 houses[is.na(houses)]<-0
 

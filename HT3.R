@@ -13,7 +13,7 @@ library(caret)
 library(tree)
 library(rpart.plot)
 
-#setwd("C:/Users/Zephyrus/Documents/U/7mo Semestre/Mineria de Datos/HT3-Mineria")
+setwd("C:/Users/Zephyrus/Documents/U/7mo Semestre/Mineria de Datos/HT3-Mineria")
 houses = read.csv('train.csv')
 houses[is.na(houses)]<-0
 
@@ -94,15 +94,27 @@ houses$clasification <- ifelse(houses$SalePrice > 290000, "Caras", ifelse(houses
 table(houses$clasification)
 
 #Creacion de grupos
-porciento <- 85/100
-set.seed(5432)
+porciento <- 70/100
+set.seed(1234)
+
+houses$Condition2 <- NULL
+houses$Exterior1st <- NULL
+houses$RoofStyle <- NULL
+houses$ExterCond <- NULL
+houses$RoofMatl <- NULL
+houses$Electrical <- NULL
+houses$Heating <- NULL
+houses$HeatingQC <- NULL
+houses$MiscFeature <- NULL
+houses$grupokm <- NULL
+houses$Exterior2nd <- NULL
+houses$SaleType <- NULL
+houses$SalePrice <- NULL
+
 
 trainRowsNumber<-sample(1:nrow(houses),porciento*nrow(houses))
 training<-houses[trainRowsNumber,]
-atipic<-data.frame(houses[c(584, 326, 1188, 1299, 945, 30, 1004, 826, 524, 1322, 1387 ,549 ,251 ,121 ,1231 ,1276 ,596 ,1380 ,399 ,31 ,48 ,342 ,336 ,22 ,13 ,2 ,1360 ,609 ,385 ,945 ,1371),])
-training<-rbind(atipic, training)
 test<-houses[-trainRowsNumber,]
-test<-test[-c(584, 326, 1188, 1299, 945, 30, 1004, 826, 524, 1322, 1387 ,549 ,251 ,121 ,1231 ,1276 ,596 ,1380 ,399 ,31 ,48 ,342 ,336 ,22 ,13 ,2 ,1360 ,609 ,385 ,945 ,1371),]
 
 table(training$clasification)
 table(test$clasification)
@@ -110,11 +122,13 @@ table(test$clasification)
 #Arbol de regresion
 arbolModelo<-rpart(clasification~.,houses,method = "class")
 rpart.plot(arbolModelo)
+
+
 #Arbol de clasificacion
 dt_model<-rpart(clasification~.,training,method = "class")
 rpart.plot(dt_model)
 
-prediccion <- predict(dt_model, newdata = test[1:82])
+prediccion <- predict(dt_model, newdata = test[1:69])
 
 columnaMasAlta<-apply(prediccion, 1, function(x) colnames(prediccion)[which.max(x)])
 test$prediccion<-columnaMasAlta
@@ -123,10 +137,14 @@ cfm<-confusionMatrix(table(test$prediccion, test$clasification))
 cfm
 
 #Random forest
-ct<-trainControl(method = "cv",training[,1:82],number=10, verboseIter=T)
+ct<-trainControl(method = "cv",training[,1:70],number=10, verboseIter=T)
 modelorf<-train(clasification~.,data=training,method="rf",trControl = ct)
-prediccionrfVC<-predict(modelorf,newdata = test[,1:82])
+prediccionrfVC<-predict(modelorf,newdata = test[,1:70])
 test$predrfVC<-prediccionrfVC
 
 cfmCaret <- confusionMatrix(table(test$predrfVC,test$clasification))
 cfmCaret
+
+table(test$clasification)
+table(test$prediccion)
+table(test$predrfVC)
